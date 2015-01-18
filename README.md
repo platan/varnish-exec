@@ -9,9 +9,8 @@ Java library and [JUnit](http://junit.org/) [rule](https://github.com/junit-team
 - [License](#license)
 
 ## Modules
--------
-* varnish-exec-core - Core module
-* varnish-exec-junit - Integration with the JUnit 
+- varnish-exec-core - Core module
+- varnish-exec-junit - Integration with the JUnit
 
 ## Requirements
 - JDK 8

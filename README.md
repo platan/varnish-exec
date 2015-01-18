@@ -1,4 +1,4 @@
-# Varnish Exec
+# Varnish Exec [![Build Status](https://travis-ci.org/platan/varnish-exec.svg?branch=master)](https://travis-ci.org/platan/varnish-exec)
 Java library and [JUnit](http://junit.org/) [rule](https://github.com/junit-team/junit/wiki/Rules) for running [Varnish Cache](https://www.varnish-cache.org/) daemon.
 
 - [Modules](#modules)

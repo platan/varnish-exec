@@ -75,7 +75,11 @@ class VarnishExecSpec extends Specification {
     }
 
     static varnishdInstalled() {
-        'varnishd -V'.execute().waitFor() == 0
+        try {
+            'varnishd -V'.execute().waitFor() == 0
+        } catch (IOException exception) {
+            false
+        }
     }
 
     static killVarnishd() {

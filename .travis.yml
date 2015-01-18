@@ -7,4 +7,4 @@ jdk:
 
 before_install:
  - sudo apt-get update -qq
- - RUNLEVEL=1 sudo apt-get install -qq varnish
+ - sudo RUNLEVEL=1 apt-get install -qq varnish

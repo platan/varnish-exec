@@ -1,0 +1,79 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.github.ben-manes:gradle-versions-plugin:0.7'
+        classpath 'info.solidsoft.gradle.pitest:gradle-pitest-plugin:1.1.1'
+    }
+}
+
+allprojects {
+    version = '0.1.0-SNAPSHOT'
+    group = 'com.github.platan'
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'groovy'
+    apply plugin: 'checkstyle'
+    apply plugin: 'codenarc'
+    apply plugin: 'idea'
+    apply plugin: 'info.solidsoft.pitest'
+    apply plugin: 'jacoco'
+    apply plugin: 'maven-publish'
+    apply plugin: 'sonar-runner'
+    apply plugin: 'com.github.ben-manes.versions'
+
+    sourceCompatibility = 1.8
+
+    repositories {
+        mavenCentral()
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+    }
+
+    configurations {
+        provided
+    }
+
+    sourceSets {
+        main { compileClasspath += configurations.provided }
+    }
+
+    idea {
+        module {
+            scopes.PROVIDED.plus += [configurations.provided]
+        }
+    }
+
+    pitest {
+        targetClasses = ['com.github.platan.varnishexec.*']
+    }
+
+    codenarc {
+        configFile = new File("${project.rootDir}/config/codenarc/rules.groovy")
+        toolVersion = codenarcToolVersion
+    }
+
+    jacoco {
+        toolVersion = jacocoToolVersion
+    }
+
+    checkstyle {
+        toolVersion = checkstyleToolVersion
+        configFile = new File("${project.rootDir}/config/checkstyle/checkstyle.xml")
+    }
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                from components.java
+            }
+        }
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.2.1'
+}

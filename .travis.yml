@@ -1,10 +1,13 @@
 language: java
 
-script: ./gradlew check --info
-
 jdk:
   - oraclejdk8
 
 before_install:
  - sudo apt-get update -qq
  - sudo RUNLEVEL=1 apt-get install -qq varnish
+
+script: ./gradlew check --info
+
+after_success:
+ - ./gradlew coveralls

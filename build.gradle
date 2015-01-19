@@ -6,7 +6,15 @@ buildscript {
     dependencies {
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.7'
         classpath 'info.solidsoft.gradle.pitest:gradle-pitest-plugin:1.1.1'
+        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.0.1'
     }
+}
+
+apply plugin: 'com.github.kt3k.coveralls'
+apply plugin: 'jacoco'
+
+repositories {
+    jcenter()
 }
 
 allprojects {
@@ -72,6 +80,30 @@ subprojects {
             }
         }
     }
+}
+
+task jacocoRootReport(type: JacocoReport) {
+    additionalSourceDirs = files(subprojects.sourceSets.main.allSource.srcDirs)
+    sourceDirectories = files(subprojects.sourceSets.main.allSource.srcDirs)
+    classDirectories = files(subprojects.sourceSets.main.output)
+    executionData = files(subprojects.jacocoTestReport.executionData)
+    reports {
+        html.enabled = true
+        xml.enabled = true
+    }
+    doFirst {
+        executionData = files(executionData.findAll { it.exists() })
+    }
+}
+
+coveralls {
+    jacocoReportPath = "${buildDir}/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
+    subprojects.sourceSets.main.allSource.srcDirs*.path.each { sourceDirs.addAll(it) }
+}
+
+tasks.coveralls {
+    dependsOn jacocoRootReport
+    onlyIf { System.env.'CI' }
 }
 
 task wrapper(type: Wrapper) {

@@ -19,11 +19,11 @@ Java library and [JUnit](http://junit.org/) [rule](https://github.com/junit-team
 ## Installation
 
 Currently Varnish Exec is not available in Maven Central. In order to install it in your local Maven repository run:
-```
+```shell
 ./gradlew publishToMavenLocal
 ```
 Apache Maven:
-```
+```xml
 <dependency>
     <groupId>com.github.platan</groupId>
     <artifactId>varnish-exec-(core|junit)</artifactId>
@@ -32,16 +32,18 @@ Apache Maven:
 </dependency>
 ```
 Gradle:
-```
+```gradle
 repositories {
     mavenLocal()
 }
 
-testCompile 'com.github.platan:varnish-exec-(core|junit):0.1.0-SNAPSHOT'
+dependencies {
+    testCompile 'com.github.platan:varnish-exec-(core|junit):0.1.0-SNAPSHOT'
+}
 ```
 ## Usage
 JUnit test using rule:
-```
+```java
 import com.github.platan.varnishexec.VarnishCommand;
 import com.github.platan.varnishexec.junit.VarnishResource;
 
@@ -66,7 +68,7 @@ public class MyTest {
 In the above example we use a [ClassRule](https://github.com/junit-team/junit/wiki/Rules#classrule). Varnish Cache daemon starts once before all tests run and shutdowns after they are finished.
 
 Another test using API:
-```
+```java
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
@@ -99,7 +101,7 @@ public class MyTest {
 }
 ```
 The above examples will start a new process with default values:
-```
+```shell
 varnishd -a localhost:10080 -F -f ./src/test/etc/varnish/default.vcl -n /tmp
 ```
 ## Customization
@@ -117,7 +119,7 @@ instance name                | -n                 | name              | /tmp
 storage backend              | -s                 | storage           |
 
 Build a command:
-```
+```java
 VarnishCommand command = VarnishCommand.newBuilder()
                 .withAddress("localhost", 80)
                 .withConfigFile("service.vcl")
@@ -127,11 +129,11 @@ VarnishCommand command = VarnishCommand.newBuilder()
                 .withVarnishdCommand("/usr/sbin/varnishd").build();
 ```
 Then pass it to `VarnishResource`:
-```
+```java
 VarnishResource varnishResource = VarnishResource.build(command);
 ```
 Or to `VarnishExecs#start`:
-```
+```java
 VarnishProcess varnishProcess = VarnishExecs.start(command);
 ```
 ## License

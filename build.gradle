@@ -22,6 +22,12 @@ allprojects {
     group = 'com.github.platan'
 }
 
+ext {
+    deps = [
+            groovy: 'org.codehaus.groovy:groovy-all:2.3.7',
+            spock: 'org.spockframework:spock-core:1.0-groovy-2.3-SNAPSHOT'
+    ]
+}
 subprojects {
     apply plugin: 'java'
     apply plugin: 'groovy'

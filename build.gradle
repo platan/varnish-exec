@@ -12,6 +12,10 @@ buildscript {
     }
 }
 
+plugins {
+    id 'pl.allegro.tech.build.axion-release' version '1.0.1'
+}
+
 apply plugin: 'com.github.kt3k.coveralls'
 apply plugin: 'jacoco'
 
@@ -20,7 +24,7 @@ repositories {
 }
 
 allprojects {
-    version = '0.1.0-SNAPSHOT'
+    project.version = scmVersion.version
     group = 'com.github.platan'
     ext.displayName = null
     ext.snapshotVersion =  version.endsWith('-SNAPSHOT') ? true : false

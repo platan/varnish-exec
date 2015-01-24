@@ -18,29 +18,47 @@ Java library and [JUnit](http://junit.org/) [rule](https://github.com/junit-team
 
 ## Installation
 
-Currently Varnish Exec is not available in Maven Central. In order to install it in your local Maven repository run:
-```shell
-./gradlew publishToMavenLocal
-```
+Currently Varnish Exec is available in Sonatype OSS Snapshot Repository only.
+
 Apache Maven:
 ```xml
-<dependency>
-    <groupId>com.github.platan</groupId>
-    <artifactId>varnish-exec-(core|junit)</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
-    <scope>test</scope>
-</dependency>
+<repositories>
+    <repository>
+        <id>sonatype-oss-snapshots</id>
+        <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        <releases>
+            <enabled>false</enabled>
+        </releases>
+        <snapshots>
+            <enabled>true</enabled>
+        </snapshots>
+    </repository>
+</repositories>
+<dependencies>
+    <dependency>
+        <groupId>com.github.platan</groupId>
+        <artifactId>varnish-exec-(core|junit)</artifactId>
+        <version>0.1.0-SNAPSHOT</version>
+        <scope>test</scope>
+    </dependency>
+</dependencies>
 ```
 Gradle:
 ```gradle
 repositories {
-    mavenLocal()
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
 }
 
 dependencies {
     testCompile 'com.github.platan:varnish-exec-(core|junit):0.1.0-SNAPSHOT'
 }
 ```
+
+In order to install it in your local Maven repository run:
+```shell
+./gradlew install
+```
+
 ## Usage
 JUnit test using rule:
 ```java

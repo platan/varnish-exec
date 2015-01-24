@@ -94,6 +94,10 @@ subprojects {
         sign configurations.archives
     }
 
+    signArchives {
+        onlyIf { gradle.taskGraph.hasTask(uploadArchives) }
+    }
+
     afterEvaluate {
         uploadArchives {
             repositories {

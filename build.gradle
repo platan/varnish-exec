@@ -2,11 +2,13 @@ buildscript {
     repositories {
         mavenCentral()
         jcenter()
+        maven { url 'http://repo.spring.io/plugins-release' }
     }
     dependencies {
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.7'
         classpath 'info.solidsoft.gradle.pitest:gradle-pitest-plugin:1.1.1'
         classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.0.1'
+        classpath 'org.springframework.build.gradle:propdeps-plugin:0.0.7'
     }
 }
 
@@ -20,6 +22,8 @@ repositories {
 allprojects {
     version = '0.1.0-SNAPSHOT'
     group = 'com.github.platan'
+    ext.displayName = null
+    ext.snapshotVersion =  version.endsWith('-SNAPSHOT') ? true : false
 }
 
 ext {
@@ -28,6 +32,7 @@ ext {
             spock: 'org.spockframework:spock-core:1.0-groovy-2.3-SNAPSHOT'
     ]
 }
+
 subprojects {
     apply plugin: 'java'
     apply plugin: 'groovy'
@@ -36,29 +41,19 @@ subprojects {
     apply plugin: 'idea'
     apply plugin: 'info.solidsoft.pitest'
     apply plugin: 'jacoco'
-    apply plugin: 'maven-publish'
+    apply plugin: 'propdeps'
+    apply plugin: 'propdeps-maven'
+    apply plugin: 'propdeps-idea'
+    apply plugin: 'maven'
     apply plugin: 'sonar-runner'
     apply plugin: 'com.github.ben-manes.versions'
+    apply plugin: 'signing'
 
     sourceCompatibility = 1.8
 
     repositories {
         mavenCentral()
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
-    }
-
-    configurations {
-        provided
-    }
-
-    sourceSets {
-        main { compileClasspath += configurations.provided }
-    }
-
-    idea {
-        module {
-            scopes.PROVIDED.plus += [configurations.provided]
-        }
     }
 
     pitest {
@@ -79,10 +74,71 @@ subprojects {
         configFile = new File("${project.rootDir}/config/checkstyle/checkstyle.xml")
     }
 
-    publishing {
-        publications {
-            mavenJava(MavenPublication) {
-                from components.java
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        classifier = 'javadoc'
+        from javadoc.destinationDir
+    }
+
+    task sourcesJar(type: Jar) {
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
+
+    artifacts {
+        archives jar
+        archives javadocJar
+        archives sourcesJar
+    }
+
+    signing {
+        sign configurations.archives
+    }
+
+    afterEvaluate {
+        uploadArchives {
+            repositories {
+                mavenDeployer {
+                    beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+                    if (snapshotVersion) {
+                        snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                            if (project.hasProperty("sonatypeOssUsername")) {
+                                authentication(userName: sonatypeOssUsername, password: sonatypeOssPassword)
+                            }
+                        }
+                    } else {
+                        repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                            if (project.hasProperty("sonatypeOssUsername")) {
+                                authentication(userName: sonatypeOssUsername, password: sonatypeOssPassword)
+                            }
+                        }
+                    }
+
+                    pom.project {
+                        name project.displayName
+                        description project.description
+                        url 'https://github.com/platan/varnish-exec'
+                        scm {
+                            url 'https://github.com/platan/varnish-exec'
+                            connection 'scm:git:git://github.com/platan/varnish-exec.git'
+                            developerConnection 'scm:git:ssh://git@github.com:platan/varnish-exec.git'
+                        }
+                        licenses {
+                            license {
+                                name 'MIT license'
+                                url 'http://opensource.org/licenses/MIT'
+                                distribution 'repo'
+                            }
+                        }
+                        developers {
+                            developer {
+                                id 'platan'
+                                name 'Marcin Mielnicki'
+                                email 'marcin.mielnicki@gmail.com'
+                            }
+                        }
+                    }
+                }
             }
         }
     }

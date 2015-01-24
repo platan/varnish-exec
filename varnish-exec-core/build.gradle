@@ -1,3 +1,6 @@
+displayName = "Varnish Exec - Core Module"
+description = "Varnish Exec's is a Java library for running Varnish Cache Daemon."
+
 apply from: 'https://raw.github.com/brunodecarvalho/gradle-plugins/master/integration-test.gradle'
 
 dependencies {

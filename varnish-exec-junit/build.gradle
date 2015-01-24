@@ -1,3 +1,6 @@
+displayName = "Varnish Exec - JUnit Module"
+description = "Varnish Exec's JUnit Module provides integration with JUnit via rule."
+
 dependencies {
     compile project(':varnish-exec-core')
     provided 'junit:junit:4.12'

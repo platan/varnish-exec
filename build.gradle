@@ -127,9 +127,9 @@ subprojects {
                         description project.description
                         url 'https://github.com/platan/varnish-exec'
                         scm {
-                            url 'https://github.com/platan/varnish-exec'
-                            connection 'scm:git:git://github.com/platan/varnish-exec.git'
-                            developerConnection 'scm:git:ssh://git@github.com:platan/varnish-exec.git'
+                            url 'git@github.com:platan/varnish-exec.git'
+                            connection 'scm:git:git@github.com:platan/varnish-exec.git'
+                            developerConnection 'scm:git:git@github.com:platan/varnish-exec.git'
                         }
                         licenses {
                             license {

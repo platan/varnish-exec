@@ -6,6 +6,7 @@ Java library and [JUnit](http://junit.org/) [rule](https://github.com/junit-team
 - [Installation](#installation)
 - [Usage](#usage)
 - [Customization](#customization)
+- [Changelog](#changelog)
 - [License](#license)
 
 ## Modules
@@ -18,27 +19,15 @@ Java library and [JUnit](http://junit.org/) [rule](https://github.com/junit-team
 
 ## Installation
 
-Currently Varnish Exec is available in Sonatype OSS Snapshot Repository only.
+Varnish Exec is available in Maven Central.
 
 Apache Maven:
 ```xml
-<repositories>
-    <repository>
-        <id>sonatype-oss-snapshots</id>
-        <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        <releases>
-            <enabled>false</enabled>
-        </releases>
-        <snapshots>
-            <enabled>true</enabled>
-        </snapshots>
-    </repository>
-</repositories>
 <dependencies>
     <dependency>
         <groupId>com.github.platan</groupId>
         <artifactId>varnish-exec-(core|junit)</artifactId>
-        <version>0.1.0-SNAPSHOT</version>
+        <version>0.1.0</version>
         <scope>test</scope>
     </dependency>
 </dependencies>
@@ -46,11 +35,11 @@ Apache Maven:
 Gradle:
 ```gradle
 repositories {
-    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+    mavenCentral()
 }
 
 dependencies {
-    testCompile 'com.github.platan:varnish-exec-(core|junit):0.1.0-SNAPSHOT'
+    testCompile 'com.github.platan:varnish-exec-(core|junit):0.1.0'
 }
 ```
 
@@ -154,5 +143,11 @@ Or to `VarnishExecs#start`:
 ```java
 VarnishProcess varnishProcess = VarnishExecs.start(command);
 ```
+
+## Changelog
+
+### 0.1.0 (2015-01-25)
+- Initial release
+
 ## License
 This project is licensed under the MIT license.

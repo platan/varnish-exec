@@ -1,4 +1,4 @@
-# Varnish Exec [![Build Status](https://travis-ci.org/platan/varnish-exec.svg?branch=master)](https://travis-ci.org/platan/varnish-exec) [![Coverage Status](https://coveralls.io/repos/platan/varnish-exec/badge.svg?branch=master)](https://coveralls.io/r/platan/varnish-exec?branch=master)
+# Varnish Exec [![Build Status](https://travis-ci.org/platan/varnish-exec.svg?branch=master)](https://travis-ci.org/platan/varnish-exec) [![Coverage Status](https://coveralls.io/repos/platan/varnish-exec/badge.svg?branch=master)](https://coveralls.io/r/platan/varnish-exec?branch=master) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.platan/varnish-exec-core/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/com.github.platan/varnish-exec-core)
 Java library and [JUnit](http://junit.org/) [rule](https://github.com/junit-team/junit/wiki/Rules) for running [Varnish Cache](https://www.varnish-cache.org/) daemon.
 
 - [Modules](#modules)

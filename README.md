@@ -5,6 +5,7 @@ Java library and [JUnit](http://junit.org/) [rule](https://github.com/junit-team
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Usage](#usage)
+- [Examples](#examples)
 - [Customization](#customization)
 - [Changelog](#changelog)
 - [License](#license)
@@ -111,6 +112,10 @@ The above examples will start a new process with default values:
 ```shell
 varnishd -a localhost:10080 -F -f ./src/test/etc/varnish/default.vcl -n /tmp
 ```
+
+## Examples
+Examples can be found on [varnish-exec-example](https://github.com/platan/varnish-exec-example). 
+
 ## Customization
 Use `VarnishCommand` to override default arguments. Varnish daemon command can be configured by `varnishdCommand` parameter.
 

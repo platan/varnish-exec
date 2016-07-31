@@ -1,0 +1,1 @@
+org.springframework.test.context.TestExecutionListener = com.github.platan.varnishexec.spring.VarnishTestExecutionListener

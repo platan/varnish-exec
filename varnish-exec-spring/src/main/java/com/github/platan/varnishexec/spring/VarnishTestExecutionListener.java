@@ -37,7 +37,7 @@ public class VarnishTestExecutionListener extends AbstractTestExecutionListener 
     private void startVarnish(TestContext testContext, VarnishTest varnishTest) throws IOException {
         String vclScript = varnishTest.vclScript();
         String applicationPort = getApplicationPort(testContext);
-        String vclFile = prepareVarnishConfiguration(vclScript, applicationPort);
+        String vclFile = createVclScript(vclScript, applicationPort);
         String varnishName = createTempDirectory("varnish").toAbsolutePath().toString();
         VarnishCommand varnishCommand = VarnishCommand.newBuilder()
                 .withConfigFile(vclFile)
@@ -50,7 +50,7 @@ public class VarnishTestExecutionListener extends AbstractTestExecutionListener 
         return testContext.getApplicationContext().getEnvironment().getProperty("local.server.port");
     }
 
-    private String prepareVarnishConfiguration(String vclScript, String applicationPort) throws IOException {
+    private String createVclScript(String vclScript, String applicationPort) throws IOException {
         String vclTemplate = readResource(vclScript);
         String vclContentWithPort = vclTemplate.replaceFirst("@local.port@", applicationPort);
         Path vclPath = createTempFile("test", "vcl");

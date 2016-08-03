@@ -7,7 +7,7 @@ import spock.lang.Specification
 
 @ContextConfiguration(classes = [Application], loader = SpringApplicationContextLoader)
 @WebIntegrationTest(randomPort = true)
-@VarnishTest(vclScript = './varnish/default.vcl')
+@VarnishTest(configFile = './varnish/default.vcl')
 class AnnotationSpec extends Specification {
 
     def "get resource via varnish"() {

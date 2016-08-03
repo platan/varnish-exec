@@ -13,6 +13,29 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface VarnishTest {
-    String vclScript();
+    HostAndPort address() default @VarnishTest.HostAndPort(host = "", port = -1);
+
+    HostAndPort backend() default @HostAndPort(host = "", port = -1);
+
+    String configFile() default "";
+
+    HostAndPort managementAddress() default @HostAndPort(host = "", port = -1);
+
+    String storage() default "";
+
+    String name() default "";
+
+    boolean randomName() default false;
+
+    String varnishdCommand() default "";
+
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({})
+    @interface HostAndPort {
+        String host();
+
+        int port();
+    }
+
 }
 

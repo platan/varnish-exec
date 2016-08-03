@@ -3,6 +3,7 @@ package com.github.platan.varnishexec.spring;
 import com.github.platan.varnishexec.VarnishCommand;
 import com.github.platan.varnishexec.VarnishExecs;
 import com.github.platan.varnishexec.VarnishProcess;
+import com.github.platan.varnishexec.spring.VarnishTest.HostAndPort;
 import org.springframework.test.context.TestContext;
 import org.springframework.test.context.support.AbstractTestExecutionListener;
 
@@ -35,15 +36,48 @@ public class VarnishTestExecutionListener extends AbstractTestExecutionListener 
     }
 
     private void startVarnish(TestContext testContext, VarnishTest varnishTest) throws IOException {
-        String vclScript = varnishTest.vclScript();
+        String vclScript = varnishTest.configFile();
         String applicationPort = getApplicationPort(testContext);
         String vclFile = createVclScript(vclScript, applicationPort);
-        String varnishName = createTempDirectory("varnish").toAbsolutePath().toString();
-        VarnishCommand varnishCommand = VarnishCommand.newBuilder()
+        VarnishCommand.Builder builder = VarnishCommand.newBuilder();
+
+        HostAndPort address = varnishTest.address();
+        if (hostIsDefined(address)) {
+            builder.withAddress(address.host(), address.port());
+        }
+        HostAndPort managementAddress = varnishTest.managementAddress();
+        if (hostIsDefined(managementAddress)) {
+            builder.withManagementAddress(managementAddress.host(), managementAddress.port());
+        }
+        HostAndPort backend = varnishTest.backend();
+        if (hostIsDefined(backend)) {
+            builder.withBackend(backend.host(), backend.port());
+        }
+        String storage = varnishTest.storage();
+        if (!storage.isEmpty()) {
+            builder.withStorage(storage);
+        }
+        String name;
+        if (varnishTest.randomName()) {
+            name = createTempDirectory("varnish").toAbsolutePath().toString();
+        } else {
+            name = varnishTest.name();
+        }
+        if (!name.isEmpty()) {
+            builder.withName(name);
+        }
+        String varnishdCommand = varnishTest.varnishdCommand();
+        if (!varnishdCommand.isEmpty()) {
+            builder.withVarnishdCommand(varnishdCommand);
+        }
+        VarnishCommand varnishCommand = builder
                 .withConfigFile(vclFile)
-                .withName(varnishName)
                 .build();
         varnishProcess = VarnishExecs.start(varnishCommand);
+    }
+
+    private boolean hostIsDefined(HostAndPort address) {
+        return !address.host().isEmpty() && address.port() != -1;
     }
 
     private String getApplicationPort(TestContext testContext) {

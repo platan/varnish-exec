@@ -4,6 +4,10 @@ import com.github.platan.varnishexec.VarnishCommand;
 import com.github.platan.varnishexec.VarnishExecs;
 import com.github.platan.varnishexec.VarnishProcess;
 import com.github.platan.varnishexec.spring.VarnishTest.HostAndPort;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.env.MapPropertySource;
+import org.springframework.core.env.MutablePropertySources;
 import org.springframework.test.context.TestContext;
 import org.springframework.test.context.support.AbstractTestExecutionListener;
 
@@ -14,6 +18,9 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.Files.createTempDirectory;
@@ -22,10 +29,12 @@ import static java.nio.file.Files.createTempFile;
 
 public class VarnishTestExecutionListener extends AbstractTestExecutionListener {
 
+    private static final Random RANDOM = new Random();
+    private static final String VARNISH_PROPERTY_SOURCE = "varnish";
     private VarnishProcess varnishProcess;
 
     @Override
-    public void beforeTestClass(TestContext testContext) throws Exception {
+    public void prepareTestInstance(TestContext testContext) throws Exception {
         super.beforeTestClass(testContext);
         VarnishTest varnishTest = testContext.getTestClass().getAnnotation(VarnishTest.class);
         if (varnishTest == null) {
@@ -36,15 +45,14 @@ public class VarnishTestExecutionListener extends AbstractTestExecutionListener 
     }
 
     private void startVarnish(TestContext testContext, VarnishTest varnishTest) throws IOException {
+
         String vclScript = varnishTest.configFile();
         String applicationPort = getApplicationPort(testContext);
         String vclFile = createVclScript(vclScript, applicationPort);
         VarnishCommand.Builder builder = VarnishCommand.newBuilder();
 
         HostAndPort address = varnishTest.address();
-        if (hostIsDefined(address)) {
-            builder.withAddress(address.host(), address.port());
-        }
+        builder.withAddress(address.host(), preparePort(address.port(), testContext.getApplicationContext()));
         HostAndPort managementAddress = varnishTest.managementAddress();
         if (hostIsDefined(managementAddress)) {
             builder.withManagementAddress(managementAddress.host(), managementAddress.port());
@@ -80,6 +88,34 @@ public class VarnishTestExecutionListener extends AbstractTestExecutionListener 
         return !address.host().isEmpty() && address.port() != -1;
     }
 
+    private int preparePort(int port, ApplicationContext context) {
+        int actualPort = port == 0 ? getRandomPort() : port;
+        setPortProperty(context, "local.varnish.port", actualPort);
+        return actualPort;
+    }
+
+    private int getRandomPort() {
+        return RANDOM.nextInt(65535) + 1;
+    }
+
+    private void setPortProperty(ApplicationContext context, String propertyName, int port) {
+        if (context instanceof ConfigurableApplicationContext) {
+            MutablePropertySources sources = ((ConfigurableApplicationContext) context).getEnvironment().getPropertySources();
+            Map<String, Object> map;
+            if (sources.contains(VARNISH_PROPERTY_SOURCE)) {
+                map = (Map<String, Object>) sources.get(VARNISH_PROPERTY_SOURCE).getSource();
+            } else {
+                map = new HashMap<>();
+                MapPropertySource source = new MapPropertySource(VARNISH_PROPERTY_SOURCE, map);
+                sources.addFirst(source);
+            }
+            map.put(propertyName, port);
+        }
+        if (context.getParent() != null) {
+            setPortProperty(context.getParent(), propertyName, port);
+        }
+    }
+
     private String getApplicationPort(TestContext testContext) {
         return testContext.getApplicationContext().getEnvironment().getProperty("local.server.port");
     }
@@ -112,4 +148,10 @@ public class VarnishTestExecutionListener extends AbstractTestExecutionListener 
         }
         super.afterTestClass(testContext);
     }
+
+    @Override
+    public int getOrder() {
+        return 1900;
+    }
+
 }

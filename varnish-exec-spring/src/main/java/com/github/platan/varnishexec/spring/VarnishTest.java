@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface VarnishTest {
-    HostAndPort address() default @VarnishTest.HostAndPort(host = "", port = -1);
+    HostAndPort address() default @VarnishTest.HostAndPort(host = "localhost", port = 10080);
 
     HostAndPort backend() default @HostAndPort(host = "", port = -1);
 

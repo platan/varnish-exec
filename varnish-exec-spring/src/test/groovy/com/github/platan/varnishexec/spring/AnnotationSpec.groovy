@@ -1,5 +1,6 @@
 package com.github.platan.varnishexec.spring
 
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.SpringApplicationContextLoader
 import org.springframework.boot.test.WebIntegrationTest
 import org.springframework.test.context.ContextConfiguration
@@ -7,11 +8,14 @@ import spock.lang.Specification
 
 @ContextConfiguration(classes = [Application], loader = SpringApplicationContextLoader)
 @WebIntegrationTest(randomPort = true)
-@VarnishTest(configFile = './varnish/default.vcl')
+@VarnishTest(configFile = './varnish/default.vcl', address = @VarnishTest.HostAndPort(host = 'localhost', port = 0))
 class AnnotationSpec extends Specification {
+
+    @Value('${local.varnish.port}')
+    def varnishPort
 
     def "get resource via varnish"() {
         expect:
-        'http://localhost:10080/'.toURL().text == 'Hello World!'
+        "http://localhost:$varnishPort/".toURL().text == 'Hello World!'
     }
 }

@@ -6,6 +6,7 @@ ruleset {
         DuplicateNumberLiteral(enabled: false)
         DuplicateStringLiteral(enabled: false)
         FactoryMethodName(enabled: false)
+        GStringExpressionWithinString(enabled: false)
         LineLength(length: 140)
         MethodName(enabled: false)
         NoDef(enabled: false)

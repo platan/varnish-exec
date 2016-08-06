@@ -79,9 +79,11 @@ public class VarnishTestExecutionListener extends AbstractTestExecutionListener 
             builder.withVarnishdCommand(varnishdCommand);
         }
         String vclScript = varnishTest.configFile();
-        String applicationPort = getApplicationPort(testContext);
-        String vclFile = createVclScript(vclScript, applicationPort);
-        builder.withConfigFile(vclFile);
+        if (!vclScript.isEmpty()) {
+            String applicationPort = getApplicationPort(testContext);
+            String vclFile = createVclScript(vclScript, applicationPort);
+            builder.withConfigFile(vclFile);
+        }
         return builder;
     }
 

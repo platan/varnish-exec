@@ -45,12 +45,12 @@ public class VarnishTestExecutionListener extends AbstractTestExecutionListener 
     }
 
     private void startVarnish(TestContext testContext, VarnishTest varnishTest) throws IOException {
+        VarnishCommand.Builder builder = buildVarnishCommand(testContext, varnishTest);
+        varnishProcess = VarnishExecs.start(builder.build());
+    }
 
-        String vclScript = varnishTest.configFile();
-        String applicationPort = getApplicationPort(testContext);
-        String vclFile = createVclScript(vclScript, applicationPort);
+    private VarnishCommand.Builder buildVarnishCommand(TestContext testContext, VarnishTest varnishTest) throws IOException {
         VarnishCommand.Builder builder = VarnishCommand.newBuilder();
-
         HostAndPort address = varnishTest.address();
         builder.withAddress(address.host(), preparePort(address.port(), testContext.getApplicationContext()));
         HostAndPort managementAddress = varnishTest.managementAddress();
@@ -78,10 +78,11 @@ public class VarnishTestExecutionListener extends AbstractTestExecutionListener 
         if (!varnishdCommand.isEmpty()) {
             builder.withVarnishdCommand(varnishdCommand);
         }
-        VarnishCommand varnishCommand = builder
-                .withConfigFile(vclFile)
-                .build();
-        varnishProcess = VarnishExecs.start(varnishCommand);
+        String vclScript = varnishTest.configFile();
+        String applicationPort = getApplicationPort(testContext);
+        String vclFile = createVclScript(vclScript, applicationPort);
+        builder.withConfigFile(vclFile);
+        return builder;
     }
 
     private boolean hostIsDefined(HostAndPort address) {

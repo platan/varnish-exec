@@ -43,21 +43,24 @@ public class VarnishTestExecutionListener extends AbstractTestExecutionListener 
             return;
         }
 
-        VarnishCommand.Builder builder = buildVarnishCommand(testContext, varnishTest);
-        varnishProcess = VarnishExecs.start(builder.build());
+        String applicationPort = getApplicationPort(testContext.getApplicationContext().getEnvironment());
+        VarnishCommand.Builder builder = buildVarnishCommand(varnishTest, applicationPort);
+        VarnishCommand varnishCommand = builder.build();
+        setPortProperty(testContext.getApplicationContext(), "local.varnish.port", varnishCommand.getAddress().getPort());
+        varnishProcess = VarnishExecs.start(varnishCommand);
     }
 
-    private VarnishCommand.Builder buildVarnishCommand(TestContext testContext, VarnishTest varnishTest) throws IOException {
+    private VarnishCommand.Builder buildVarnishCommand(VarnishTest varnishTest, String applicationPort) throws IOException {
         VarnishCommand.Builder builder = VarnishCommand.newBuilder();
         HostAndPort address = varnishTest.address();
-        builder.withAddress(address.host(), preparePort(address.port(), testContext.getApplicationContext()));
+        builder.withAddress(address.host(), preparePort(address.port()));
         HostAndPort managementAddress = varnishTest.managementAddress();
         if (hostIsDefined(managementAddress)) {
             builder.withManagementAddress(managementAddress.host(), managementAddress.port());
         }
         HostAndPort backend = varnishTest.backend();
         if (hostIsDefined(backend)) {
-            builder.withBackend(backend.host(), getBackendPort(backend, testContext.getApplicationContext()));
+            builder.withBackend(backend.host(), getBackendPort(backend, applicationPort));
         }
         String storage = varnishTest.storage();
         if (!storage.isEmpty()) {
@@ -78,7 +81,6 @@ public class VarnishTestExecutionListener extends AbstractTestExecutionListener 
         }
         String vclScript = varnishTest.configFile();
         if (!vclScript.isEmpty()) {
-            String applicationPort = getApplicationPort(testContext.getApplicationContext().getEnvironment());
             String vclFile = createVclScript(vclScript, applicationPort);
             builder.withConfigFile(vclFile);
         }
@@ -89,10 +91,8 @@ public class VarnishTestExecutionListener extends AbstractTestExecutionListener 
         return !address.host().isEmpty() && address.port() != -1;
     }
 
-    private int preparePort(int port, ApplicationContext context) {
-        int actualPort = port == 0 ? getRandomPort() : port;
-        setPortProperty(context, "local.varnish.port", actualPort);
-        return actualPort;
+    private int preparePort(int port) {
+        return port == 0 ? getRandomPort() : port;
     }
 
     private int getRandomPort() {
@@ -121,8 +121,8 @@ public class VarnishTestExecutionListener extends AbstractTestExecutionListener 
         return environment.getProperty("local.server.port");
     }
 
-    private int getBackendPort(HostAndPort backend, ApplicationContext applicationContext) {
-        return backend.port() == 0 ? parseInt(getApplicationPort(applicationContext.getEnvironment())) : backend.port();
+    private int getBackendPort(HostAndPort backend, String applicationPort) {
+        return backend.port() == 0 ? parseInt(applicationPort) : backend.port();
     }
 
     private String createVclScript(String vclScript, String applicationPort) throws IOException {

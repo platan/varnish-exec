@@ -6,6 +6,7 @@ import com.github.platan.varnishexec.VarnishProcess;
 import com.github.platan.varnishexec.spring.VarnishTest.HostAndPort;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.env.Environment;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.test.context.TestContext;
@@ -22,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+import static java.lang.Integer.parseInt;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.Files.createTempDirectory;
 import static java.nio.file.Files.createTempFile;
@@ -59,7 +61,7 @@ public class VarnishTestExecutionListener extends AbstractTestExecutionListener 
         }
         HostAndPort backend = varnishTest.backend();
         if (hostIsDefined(backend)) {
-            builder.withBackend(backend.host(), backend.port());
+            builder.withBackend(backend.host(), getBackendPort(backend, testContext.getApplicationContext()));
         }
         String storage = varnishTest.storage();
         if (!storage.isEmpty()) {
@@ -80,7 +82,7 @@ public class VarnishTestExecutionListener extends AbstractTestExecutionListener 
         }
         String vclScript = varnishTest.configFile();
         if (!vclScript.isEmpty()) {
-            String applicationPort = getApplicationPort(testContext);
+            String applicationPort = getApplicationPort(testContext.getApplicationContext().getEnvironment());
             String vclFile = createVclScript(vclScript, applicationPort);
             builder.withConfigFile(vclFile);
         }
@@ -119,8 +121,12 @@ public class VarnishTestExecutionListener extends AbstractTestExecutionListener 
         }
     }
 
-    private String getApplicationPort(TestContext testContext) {
-        return testContext.getApplicationContext().getEnvironment().getProperty("local.server.port");
+    private String getApplicationPort(Environment environment) {
+        return environment.getProperty("local.server.port");
+    }
+
+    private int getBackendPort(HostAndPort backend, ApplicationContext applicationContext) {
+        return backend.port() == 0 ? parseInt(getApplicationPort(applicationContext.getEnvironment())) : backend.port();
     }
 
     private String createVclScript(String vclScript, String applicationPort) throws IOException {

@@ -18,8 +18,8 @@ import java.lang.annotation.Target;
 public @interface VarnishTest {
 
     /**
-     * Set a port equal {@code 0} to trigger listening on a random port.
-     *
+     * Set a port to {@code 0} to trigger listening on a random port.
+     * <p>
      * You can use <code>&#064;Value("${local.varnish.port}")</code> to inject port value into field in test class.
      * <p>
      * Default is {@code localhost:10080}.
@@ -27,6 +27,8 @@ public @interface VarnishTest {
     HostAndPort address() default @VarnishTest.HostAndPort(host = "localhost", port = 10080);
 
     /**
+     * Set a port to {@code 0} to use a local application port ({@code local.server.port}) as a backend port.
+     * <p>
      * Only one of "backend" or "config file" can be specified.
      */
     HostAndPort backend() default @HostAndPort(host = "", port = -1);
@@ -34,7 +36,7 @@ public @interface VarnishTest {
     /**
      * Path to a VCL configuration file. If this file contains {@code @local.port@} string, a copy of VCL configuration file
      * will be made and {@code @local.port@} value will be replaced by an application port ({@code local.server.port}) in this copy.
-     *
+     * <p>
      * Only one of "backend" or "config file" can be specified.
      */
     String configFile() default "";

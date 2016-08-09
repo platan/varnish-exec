@@ -43,10 +43,6 @@ public class VarnishTestExecutionListener extends AbstractTestExecutionListener 
             return;
         }
 
-        startVarnish(testContext, varnishTest);
-    }
-
-    private void startVarnish(TestContext testContext, VarnishTest varnishTest) throws IOException {
         VarnishCommand.Builder builder = buildVarnishCommand(testContext, varnishTest);
         varnishProcess = VarnishExecs.start(builder.build());
     }

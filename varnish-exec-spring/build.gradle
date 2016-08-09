@@ -3,12 +3,13 @@ description = "Varnish Exec's Spring Module provides integration with Spring."
 
 dependencies {
     compile project(':varnish-exec-core')
-    provided 'org.springframework:spring-test:4.2.7.RELEASE'
-    provided 'org.springframework:spring-context:4.2.7.RELEASE'
+    provided 'org.springframework:spring-test:4.3.2.RELEASE'
+    provided 'org.springframework:spring-context:4.3.2.RELEASE'
 
     testCompile deps.spock
     testCompile deps.groovy
-    testCompile 'org.springframework.boot:spring-boot-starter-web:1.3.7.RELEASE'
+    testCompile 'org.springframework.boot:spring-boot-starter-web:1.4.0.RELEASE'
+    testCompile 'org.springframework.boot:spring-boot-starter-test:1.4.0.RELEASE'
     testCompile 'com.google.guava:guava:19.0'
-    testCompile 'org.spockframework:spock-spring:1.0-groovy-2.3'
+    testCompile 'org.spockframework:spock-spring:1.1-groovy-2.3-rc-1'
 }

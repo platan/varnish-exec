@@ -33,7 +33,7 @@ allprojects {
 ext {
     deps = [
             groovy: 'org.codehaus.groovy:groovy-all:2.3.7',
-            spock: 'org.spockframework:spock-core:1.0-groovy-2.3'
+            spock: 'org.spockframework:spock-core:1.1-groovy-2.3-rc-1'
     ]
 }
 

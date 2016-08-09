@@ -18,7 +18,9 @@ import java.lang.annotation.Target;
 public @interface VarnishTest {
 
     /**
-     * Set a port to {@code 0} to trigger listening on a random port.
+     * Set a port equal {@code 0} to trigger listening on a random port.
+     *
+     * You can use <code>&#064;Value("${local.varnish.port}")</code> to inject port value into field in test class.
      * <p>
      * Default is {@code localhost:10080}.
      */
@@ -40,6 +42,9 @@ public @interface VarnishTest {
 
     String name() default "";
 
+    /**
+     * Use a random name as a varnish instance. Random name starts with value of the default temp dir ({@code java.io.tmpdir}).
+     */
     boolean randomName() default false;
 
     String varnishdCommand() default "";

@@ -32,6 +32,9 @@ public @interface VarnishTest {
     HostAndPort backend() default @HostAndPort(host = "", port = -1);
 
     /**
+     * Path to a VCL configuration file. If this file contains {@code @local.port@} string, a copy of VCL configuration file
+     * will be made and {@code @local.port@} value will be replaced by an application port ({@code local.server.port}) in this copy.
+     *
      * Only one of "backend" or "config file" can be specified.
      */
     String configFile() default "";

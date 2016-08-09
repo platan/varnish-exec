@@ -46,7 +46,7 @@ public class VarnishTestExecutionListener extends AbstractTestExecutionListener 
         String applicationPort = getApplicationPort(testContext.getApplicationContext().getEnvironment());
         VarnishCommand.Builder builder = buildVarnishCommand(varnishTest, applicationPort);
         VarnishCommand varnishCommand = builder.build();
-        setPortProperty(testContext.getApplicationContext(), "local.varnish.port", varnishCommand.getAddress().getPort());
+        setPortProperty(testContext.getApplicationContext(), VARNISH_PROPERTY_SOURCE, "local.varnish.port", varnishCommand.getAddress().getPort());
         varnishProcess = VarnishExecs.start(varnishCommand);
     }
 
@@ -99,21 +99,22 @@ public class VarnishTestExecutionListener extends AbstractTestExecutionListener 
         return RANDOM.nextInt(65535) + 1;
     }
 
-    private void setPortProperty(ApplicationContext context, String propertyName, int port) {
+
+    private <T> void setPortProperty(ApplicationContext context, String sourceName, String propertyName, T propertyValue) {
         if (context instanceof ConfigurableApplicationContext) {
             MutablePropertySources sources = ((ConfigurableApplicationContext) context).getEnvironment().getPropertySources();
             Map<String, Object> map;
-            if (sources.contains(VARNISH_PROPERTY_SOURCE)) {
-                map = (Map<String, Object>) sources.get(VARNISH_PROPERTY_SOURCE).getSource();
+            if (sources.contains(sourceName)) {
+                map = (Map<String, Object>) sources.get(sourceName).getSource();
             } else {
                 map = new HashMap<>();
-                MapPropertySource source = new MapPropertySource(VARNISH_PROPERTY_SOURCE, map);
+                MapPropertySource source = new MapPropertySource(sourceName, map);
                 sources.addFirst(source);
             }
-            map.put(propertyName, port);
+            map.put(propertyName, propertyValue);
         }
         if (context.getParent() != null) {
-            setPortProperty(context.getParent(), propertyName, port);
+            setPortProperty(context.getParent(), sourceName, propertyName, propertyValue);
         }
     }
 

@@ -29,6 +29,11 @@ import static java.nio.file.Files.createTempDirectory;
 import static java.nio.file.Files.createTempFile;
 
 
+/**
+ * This class runs Varnish Cache if test class has the {@link VarnishTest} annotation.
+ *
+ * @see VarnishTest
+ */
 public class VarnishTestExecutionListener extends AbstractTestExecutionListener {
 
     private static final Random RANDOM = new Random();

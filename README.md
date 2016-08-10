@@ -13,6 +13,7 @@ Java library and [JUnit](http://junit.org/) [rule](https://github.com/junit-team
 ## Modules
 - varnish-exec-core - Core module
 - varnish-exec-junit - Integration with the JUnit
+- varnish-exec-spring - Integration with the Spring TestContext Framework
 
 ## Requirements
 - JDK 8
@@ -27,7 +28,7 @@ Apache Maven:
 <dependencies>
     <dependency>
         <groupId>com.github.platan</groupId>
-        <artifactId>varnish-exec-(core|junit)</artifactId>
+        <artifactId>varnish-exec-(core|junit|spring)</artifactId>
         <version>0.1.0</version>
         <scope>test</scope>
     </dependency>
@@ -40,7 +41,7 @@ repositories {
 }
 
 dependencies {
-    testCompile 'com.github.platan:varnish-exec-(core|junit):0.1.0'
+    testCompile 'com.github.platan:varnish-exec-(core|junit|spring):0.1.0'
 }
 ```
 
@@ -75,7 +76,7 @@ public class MyTest {
 ```
 In the above example we use a [ClassRule](https://github.com/junit-team/junit/wiki/Rules#classrule). Varnish Cache daemon starts once before all tests run and shutdowns after they are finished.
 
-Another test using API:
+Another example using core varnish-exec API:
 ```java
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -150,6 +151,9 @@ VarnishProcess varnishProcess = VarnishExecs.start(command);
 ```
 
 ## Changelog
+
+### 0.2.0 (2016-08-??)
+- (new feature) added varnish-exec-spring module providing integration with the Spring TestContext Framework
 
 ### 0.1.0 (2015-01-25)
 - Initial release

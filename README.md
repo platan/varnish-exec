@@ -29,7 +29,7 @@ Apache Maven:
     <dependency>
         <groupId>com.github.platan</groupId>
         <artifactId>varnish-exec-(core|junit|spring)</artifactId>
-        <version>0.1.0</version>
+        <version>0.2.0</version>
         <scope>test</scope>
     </dependency>
 </dependencies>
@@ -41,7 +41,7 @@ repositories {
 }
 
 dependencies {
-    testCompile 'com.github.platan:varnish-exec-(core|junit|spring):0.1.0'
+    testCompile 'com.github.platan:varnish-exec-(core|junit|spring):0.2.0'
 }
 ```
 

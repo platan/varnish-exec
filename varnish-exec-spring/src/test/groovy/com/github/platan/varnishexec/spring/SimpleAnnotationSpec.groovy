@@ -7,7 +7,7 @@ import spock.lang.Specification
 
 @ContextConfiguration(classes = [Application], loader = SpringApplicationContextLoader)
 @WebIntegrationTest('server.port: 9000')
-@VarnishTest(backend = @VarnishTest.HostAndPort(host = 'localhost', port = 9000))
+@VarnishTest(backend = @VarnishTest.HostAndPort(host = '127.0.0.1', port = 9000))
 class SimpleAnnotationSpec extends Specification {
 
     def "get resource via varnish"() {

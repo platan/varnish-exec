@@ -8,8 +8,8 @@ import spock.lang.Specification
 
 @ContextConfiguration(classes = [Application], loader = SpringApplicationContextLoader)
 @WebIntegrationTest(randomPort = true)
-@VarnishTest(configFile = './varnish/default.vcl', address = @VarnishTest.HostAndPort(host = 'localhost', port = 0), randomName = true,
-        managementAddress = @VarnishTest.HostAndPort(host = 'localhost', port = 10090), storage = 'malloc,1m',
+@VarnishTest(configFile = './varnish/default.vcl', address = @VarnishTest.HostAndPort(host = '127.0.0.1', port = 0), randomName = true,
+        managementAddress = @VarnishTest.HostAndPort(host = '127.0.0.1', port = 10090), storage = 'malloc,1m',
         varnishdCommand = '/usr/sbin/varnishd')
 class AnnotationMoreParamsSpec extends Specification {
 

@@ -109,6 +109,32 @@ public class MyTest {
     }
 }
 ```
+
+An example using the VarnishTest annotation integrating varnish-exec with the Spring TestContext Framework:
+```java
+import com.github.platan.varnishexec.spring.VarnishTest;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
+
+@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@VarnishTest(configFile = "./src/test/etc/varnish/default.vcl")
+public class MyTest {
+
+    @Value("${local.varnish.port}")
+    private String varnishPort;
+
+    @Test
+    public void testSomethingWithRunningVarnish() {
+        ...
+    }
+}
+```
 The above examples will start a new process with default values:
 ```shell
 varnishd -a localhost:10080 -F -f ./src/test/etc/varnish/default.vcl -n /tmp

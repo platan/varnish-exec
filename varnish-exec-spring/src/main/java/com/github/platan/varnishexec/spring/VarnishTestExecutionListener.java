@@ -38,6 +38,7 @@ public class VarnishTestExecutionListener extends AbstractTestExecutionListener 
 
     private static final Random RANDOM = new Random();
     private static final String VARNISH_PROPERTY_SOURCE = "varnish";
+    private static final String LOCAL_PORT_PLACEHOLDER = "@local.port@";
     private VarnishProcess varnishProcess;
 
     @Override
@@ -86,8 +87,11 @@ public class VarnishTestExecutionListener extends AbstractTestExecutionListener 
         }
         String vclScript = varnishTest.configFile();
         if (!vclScript.isEmpty()) {
-            String vclFile = createVclScript(vclScript, applicationPort);
-            builder.withConfigFile(vclFile);
+            String vclTemplateContent = readResource(vclScript);
+            if (vclTemplateContent.contains(LOCAL_PORT_PLACEHOLDER)) {
+                vclScript = createVclScript(vclTemplateContent, applicationPort);
+            }
+            builder.withConfigFile(vclScript);
         }
         return builder;
     }
@@ -131,9 +135,8 @@ public class VarnishTestExecutionListener extends AbstractTestExecutionListener 
         return backend.port() == 0 ? parseInt(applicationPort) : backend.port();
     }
 
-    private String createVclScript(String vclScript, String applicationPort) throws IOException {
-        String vclTemplate = readResource(vclScript);
-        String vclContentWithPort = vclTemplate.replaceFirst("@local.port@", applicationPort);
+    private String createVclScript(String vclTemplateContent, String applicationPort) throws IOException {
+        String vclContentWithPort = vclTemplateContent.replaceFirst(LOCAL_PORT_PLACEHOLDER, applicationPort);
         Path vclPath = createTempFile("test", "vcl");
         Files.write(vclPath, vclContentWithPort.getBytes(UTF_8));
         return vclPath.toAbsolutePath().toString();

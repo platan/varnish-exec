@@ -110,7 +110,7 @@ public class MyTest {
 }
 ```
 
-An example using the VarnishTest annotation integrating varnish-exec with the Spring TestContext Framework:
+An example using the `VarnishTest` annotation integrating varnish-exec with the Spring TestContext Framework:
 ```java
 import com.github.platan.varnishexec.spring.VarnishTest;
 
@@ -175,6 +175,9 @@ Or to `VarnishExecs#start`:
 ```java
 VarnishProcess varnishProcess = VarnishExecs.start(command);
 ```
+
+#### Spring
+The [`VarnishTest`](https://github.com/platan/varnish-exec/blob/master/varnish-exec-spring/src/main/java/com/github/platan/varnishexec/spring/VarnishTest.java) class allows to define all options listed above. 
 
 ## Changelog
 

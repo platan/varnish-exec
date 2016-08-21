@@ -2,10 +2,12 @@ package com.github.platan.varnishexec
 
 import static VarnishExecSpec.varnishNotRunning
 import static VarnishExecSpec.varnishdInstalled
+import static java.util.concurrent.TimeUnit.MILLISECONDS
 
 import com.github.platan.varnishexec.net.SocketPortChecker
 import spock.lang.Requires
 import spock.lang.Specification
+import spock.lang.Timeout
 
 class VarnishExecSpec extends Specification {
 
@@ -21,6 +23,7 @@ class VarnishExecSpec extends Specification {
     }
 
     @Requires({ varnishdInstalled() && varnishNotRunning() })
+    @Timeout(value = 200, unit = MILLISECONDS)
     def 'throw exception when varnishd return error code'() {
         given:
         def command = VarnishCommand.newBuilder().withConfigFile('nonexistent_config_file').build()

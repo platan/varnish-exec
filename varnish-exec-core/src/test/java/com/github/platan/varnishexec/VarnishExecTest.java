@@ -4,7 +4,6 @@ import static com.googlecode.catchexception.CatchException.caughtException;
 import static com.googlecode.catchexception.apis.CatchExceptionAssertJ.then;
 import static com.googlecode.catchexception.apis.CatchExceptionAssertJ.when;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import com.github.platan.varnishexec.net.HostAndPort;
 import com.github.platan.varnishexec.net.PortChecker;
@@ -60,10 +59,11 @@ public final class VarnishExecTest {
         when(varnishExec).start(commandParams);
 
         // then
-        assertTrue(Thread.currentThread().isInterrupted());
+        then(caughtException())
+                .hasCauseInstanceOf(InterruptedException.class);
     }
 
-    @Test
+    @Test(timeout = 200)
     public void throwExceptionWhenProcessIfNotAlive(@Mocked final Process process) throws Exception {
         // given
         PortChecker alwaysFreePortChecker = address -> true;

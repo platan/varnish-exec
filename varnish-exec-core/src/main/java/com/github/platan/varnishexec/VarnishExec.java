@@ -7,6 +7,9 @@ import com.github.platan.varnishexec.util.Sleeper;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.lang.ProcessBuilder.Redirect;
+import java.util.Arrays;
+
+import static java.util.stream.Collectors.joining;
 
 public class VarnishExec {
 
@@ -28,6 +31,7 @@ public class VarnishExec {
         String[] commandArray = command.asArray();
         processBuilder.command(commandArray);
         processBuilder.redirectOutput(Redirect.INHERIT).redirectError(Redirect.INHERIT);
+        System.out.println("Starting varnish using command: " + Arrays.stream(commandArray).collect(joining(" ")));
         Process process = start(processBuilder);
         do {
             sleep();
@@ -47,7 +51,7 @@ public class VarnishExec {
         try {
             sleeper.sleep(SLEEP_MILLISECONDS);
         } catch (InterruptedException exception) {
-            Thread.currentThread().interrupt();
+            throw new RuntimeException(exception);
         }
     }
 

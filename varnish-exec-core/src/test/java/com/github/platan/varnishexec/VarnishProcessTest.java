@@ -1,9 +1,8 @@
 package com.github.platan.varnishexec;
 
-import static com.googlecode.catchexception.CatchException.caughtException;
-import static com.googlecode.catchexception.apis.CatchExceptionAssertJ.then;
 import static com.googlecode.catchexception.apis.CatchExceptionAssertJ.when;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import mockit.Delegate;
 import mockit.Mocked;
@@ -48,9 +47,7 @@ public class VarnishProcessTest {
         when(varnishExec).kill();
 
         // then
-        then(caughtException())
-                .isInstanceOf(IllegalStateException.class)
-                .hasCauseInstanceOf(InterruptedException.class);
+        assertTrue(Thread.currentThread().isInterrupted());
     }
 
     @Test

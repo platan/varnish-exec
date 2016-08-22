@@ -1,5 +1,7 @@
 package com.github.platan.varnishexec;
 
+import static java.util.stream.Collectors.joining;
+
 import com.github.platan.varnishexec.net.HostAndPort;
 import com.github.platan.varnishexec.net.PortChecker;
 import com.github.platan.varnishexec.util.Sleeper;
@@ -8,8 +10,6 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.lang.ProcessBuilder.Redirect;
 import java.util.Arrays;
-
-import static java.util.stream.Collectors.joining;
 
 public class VarnishExec {
 
@@ -33,10 +33,24 @@ public class VarnishExec {
         processBuilder.redirectOutput(Redirect.INHERIT).redirectError(Redirect.INHERIT);
         System.out.println("Starting varnish using command: " + Arrays.stream(commandArray).collect(joining(" ")));
         Process process = start(processBuilder);
-        do {
-            sleep();
-        } while (!listeningOrCrashed(command.getAddress(), process));
+        try {
+            do {
+                sleep();
+            } while (!listeningOrCrashed(command.getAddress(), process));
+        } catch (InterruptedException e) {
+            killProcess(process);
+            Thread.currentThread().interrupt();
+            return null;
+        }
         return new VarnishProcess(process, command);
+    }
+
+    private void killProcess(Process process) {
+        try {
+            process.destroyForcibly().waitFor();
+        } catch (InterruptedException exception) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     private Process start(ProcessBuilder processBuilder) {
@@ -47,12 +61,8 @@ public class VarnishExec {
         }
     }
 
-    private void sleep() {
-        try {
-            sleeper.sleep(SLEEP_MILLISECONDS);
-        } catch (InterruptedException exception) {
-            throw new RuntimeException(exception);
-        }
+    private void sleep() throws InterruptedException {
+        sleeper.sleep(SLEEP_MILLISECONDS);
     }
 
     private boolean listeningOrCrashed(HostAndPort address, Process process) {

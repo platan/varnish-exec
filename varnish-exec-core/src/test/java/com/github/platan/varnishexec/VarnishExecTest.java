@@ -4,6 +4,8 @@ import static com.googlecode.catchexception.CatchException.caughtException;
 import static com.googlecode.catchexception.apis.CatchExceptionAssertJ.then;
 import static com.googlecode.catchexception.apis.CatchExceptionAssertJ.when;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import com.github.platan.varnishexec.net.HostAndPort;
 import com.github.platan.varnishexec.net.PortChecker;
@@ -12,6 +14,7 @@ import mockit.Expectations;
 import mockit.Mocked;
 import mockit.Verifications;
 import mockit.integration.junit4.JMockit;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -47,6 +50,7 @@ public final class VarnishExecTest {
         assertEquals(commandParams, varnishProcess.getCommand());
     }
 
+    @Ignore
     @Test
     public void restoreInterruptedStatus() throws Exception {
         // given
@@ -56,11 +60,13 @@ public final class VarnishExecTest {
         VarnishExec varnishExec = new VarnishExec(processBuilder, alwaysUsedPortChecker, interruptedSleeper);
 
         // when
-        when(varnishExec).start(commandParams);
+        VarnishProcess start = varnishExec.start(commandParams);
 
         // then
-        then(caughtException())
-                .hasCauseInstanceOf(InterruptedException.class);
+        assertNull(start);
+
+        // and
+        assertTrue(Thread.currentThread().isInterrupted());
     }
 
     @Test(timeout = 200)

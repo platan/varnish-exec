@@ -13,7 +13,7 @@ public class VarnishProcess {
         try {
             process.destroyForcibly().waitFor();
         } catch (InterruptedException exception) {
-            throw new IllegalStateException(exception);
+            Thread.currentThread().interrupt();
         }
     }
 

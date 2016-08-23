@@ -10,11 +10,13 @@ import static org.junit.Assert.assertTrue;
 import com.github.platan.varnishexec.net.HostAndPort;
 import com.github.platan.varnishexec.net.PortChecker;
 import com.github.platan.varnishexec.util.Sleeper;
+import com.google.code.tempusfugit.concurrency.ConcurrentRule;
+import com.google.code.tempusfugit.concurrency.annotations.Concurrent;
 import mockit.Expectations;
 import mockit.Mocked;
 import mockit.Verifications;
 import mockit.integration.junit4.JMockit;
-import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -23,6 +25,9 @@ import java.io.UncheckedIOException;
 
 @RunWith(JMockit.class)
 public final class VarnishExecTest {
+
+    @Rule
+    public ConcurrentRule concurrentRule = new ConcurrentRule();
 
     @Mocked
     private ProcessBuilder processBuilder;
@@ -50,8 +55,8 @@ public final class VarnishExecTest {
         assertEquals(commandParams, varnishProcess.getCommand());
     }
 
-    @Ignore
     @Test
+    @Concurrent(count = 1)
     public void restoreInterruptedStatus() throws Exception {
         // given
         Sleeper interruptedSleeper = sleepMilliseconds -> {
@@ -69,7 +74,7 @@ public final class VarnishExecTest {
         assertTrue(Thread.currentThread().isInterrupted());
     }
 
-    @Test(timeout = 200)
+    @Test(timeout = 500)
     public void throwExceptionWhenProcessIfNotAlive(@Mocked final Process process) throws Exception {
         // given
         PortChecker alwaysFreePortChecker = address -> true;
@@ -93,6 +98,7 @@ public final class VarnishExecTest {
     }
 
     @Test
+
     public void rethrowIOExceptionAsUncheckedIOException(@Mocked final Process process) throws Exception {
         // given
         VarnishExec varnishExec = new VarnishExec(processBuilder, alwaysUsedPortChecker, sleeper);

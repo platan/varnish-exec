@@ -11,4 +11,5 @@ dependencies {
     testCompile deps.groovy
     testCompile 'org.jmockit:jmockit:1.14'
     testCompile deps.spock
+    testCompile 'com.google.code.tempus-fugit:tempus-fugit:1.1'
 }

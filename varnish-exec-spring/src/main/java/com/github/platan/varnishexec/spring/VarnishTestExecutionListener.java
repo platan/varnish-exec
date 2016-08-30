@@ -42,7 +42,7 @@ public class VarnishTestExecutionListener extends AbstractTestExecutionListener 
     private VarnishProcess varnishProcess;
 
     @Override
-    public void prepareTestInstance(TestContext testContext) throws Exception {
+    public void beforeTestClass(TestContext testContext) throws Exception {
         super.beforeTestClass(testContext);
         VarnishTest varnishTest = testContext.getTestClass().getAnnotation(VarnishTest.class);
         if (varnishTest == null) {

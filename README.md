@@ -185,7 +185,7 @@ Check a [documentation](https://github.com/platan/varnish-exec/blob/master/varni
 
 ## Changelog
 
-### 0.2.0 (2016-08-??)
+### 0.2.0 (2016-09-03)
 - (new feature) added varnish-exec-spring module providing integration with the Spring TestContext Framework
 
 ### 0.1.0 (2015-01-25)

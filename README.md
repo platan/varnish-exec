@@ -181,6 +181,7 @@ The `VarnishTest` class allows to define all options listed above. Furthermore, 
 - can set a random name and a random port
 - replaces `@local.port@` with a value of an application port (`local.server.port`) in a copy of VCL configuration file
 - sets `local.varnish.port` property with a value of a varnish port
+
 Check a [documentation](https://github.com/platan/varnish-exec/blob/master/varnish-exec-spring/src/main/java/com/github/platan/varnishexec/spring/VarnishTest.java) for more information. 
 
 ## Changelog

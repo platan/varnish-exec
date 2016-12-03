@@ -17,7 +17,7 @@ Java library and [JUnit](http://junit.org/) [rule](https://github.com/junit-team
 
 ## Requirements
 - JDK 8
-- Varnish Cache 3.0 or 4.0
+- Varnish Cache 3.0, 4.0 or 5.0
 
 ## Installation
 

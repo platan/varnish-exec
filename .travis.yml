@@ -1,3 +1,5 @@
+dist: trusty
+
 language: java
 
 jdk:
@@ -5,7 +7,10 @@ jdk:
 
 before_install:
  - sudo apt-get update -qq
- - sudo RUNLEVEL=1 apt-get install -qq varnish
+ - sudo apt-get install -qq libjemalloc1
+ - wget https://repo.varnish-cache.org/pkg/5.0.0/varnish_5.0.0-1_amd64.deb
+ - sudo RUNLEVEL=1 dpkg -i varnish_5.0.0-1_amd64.deb
+ - sudo pkill varnishd
 
 script: ./gradlew check --info
 

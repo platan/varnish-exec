@@ -12,6 +12,7 @@ ruleset {
         NoDef(enabled: false)
         PrivateFieldCouldBeFinal(enabled: false)
         SpaceAroundMapEntryColon(enabled: false)
+        ThrowRuntimeException(enabled: false)
         UnnecessaryBooleanExpression(enabled: false)
         UnusedObject(enabled: false)
     }

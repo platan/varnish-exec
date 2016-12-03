@@ -1,7 +1,5 @@
 package com.github.platan.varnishexec
 
-import static VarnishExecSpec.varnishNotRunning
-import static VarnishExecSpec.varnishdInstalled
 import static java.util.concurrent.TimeUnit.MILLISECONDS
 
 import com.github.platan.varnishexec.net.SocketPortChecker
@@ -22,10 +20,12 @@ class VarnishExecSpec extends Specification {
         thrown(UncheckedIOException)
     }
 
-    @Requires({ varnishdInstalled() && varnishNotRunning() })
+    @Requires({ os.linux })
     @Timeout(value = 200, unit = MILLISECONDS)
     def 'throw exception when varnishd return error code'() {
         given:
+        varnishdInstalled()
+        !varnishRunning()
         def command = VarnishCommand.newBuilder().withConfigFile('nonexistent_config_file').build()
         def exec = VarnishExecs.newVarnishExec()
 
@@ -36,11 +36,11 @@ class VarnishExecSpec extends Specification {
         thrown IllegalStateException
     }
 
-    @Requires({
-        os.linux && varnishdInstalled() && varnishNotRunning()
-    })
+    @Requires({ os.linux })
     def 'wait until varnish start listening'() {
         given:
+        varnishdInstalled()
+        !varnishRunning()
         def command = VarnishCommand.newBuilder().withConfigFile('./src/test/resources/simple.vcl').build()
         def exec = VarnishExecs.newVarnishExec()
 
@@ -54,11 +54,11 @@ class VarnishExecSpec extends Specification {
         killVarnishd()
     }
 
-    @Requires({
-        os.linux && varnishdInstalled() && varnishNotRunning()
-    })
+    @Requires({ os.linux })
     def 'close varnish process'() {
         given:
+        varnishdInstalled()
+        !varnishRunning()
         def command = VarnishCommand.newBuilder().withConfigFile('./src/test/resources/simple.vcl').build()
         def exec = VarnishExecs.newVarnishExec()
         def process = exec.start(command)
@@ -67,14 +67,14 @@ class VarnishExecSpec extends Specification {
         process.kill()
 
         then:
-        varnishNotRunning()
+        !varnishRunning()
 
         cleanup:
         killVarnishd()
     }
 
-    static varnishNotRunning() {
-        'pidof varnishd'.execute().waitFor() != 0
+    private static boolean varnishRunning() {
+        'pidof varnishd'.execute().waitFor() == 0
     }
 
     static varnishdInstalled() {
@@ -87,6 +87,16 @@ class VarnishExecSpec extends Specification {
 
     static killVarnishd() {
         'pkill varnishd'.execute().waitFor()
+        def timeout = 5000
+        def remainingTime = timeout
+        def step = 50
+        while (remainingTime > 0 && varnishRunning()) {
+            remainingTime -= step
+            sleep step
+        }
+        if (remainingTime == 0) {
+            throw new RuntimeException("Cannot kill varnishd within $timeout milliseconds")
+        }
     }
 
 }

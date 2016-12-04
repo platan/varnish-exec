@@ -5,12 +5,25 @@ language: java
 jdk:
   - oraclejdk8
 
+matrix:
+  include:
+    - env: VARNISH_VERSION=4.1
+    - env: VARNISH_VERSION=5.0.0
+
 before_install:
- - sudo apt-get update -qq
- - sudo apt-get install -qq libjemalloc1
- - wget https://repo.varnish-cache.org/pkg/5.0.0/varnish_5.0.0-1_amd64.deb
- - sudo RUNLEVEL=1 dpkg -i varnish_5.0.0-1_amd64.deb
- - sudo pkill varnishd
+- |
+  set -e
+  if [ "$VARNISH_VERSION" = "5.0.0" ]; then
+    wget https://repo.varnish-cache.org/pkg/${VARNISH_VERSION}/varnish_${VARNISH_VERSION}-1_amd64.deb
+    sudo apt-get install -qq libjemalloc1
+    sudo dpkg -i varnish_${VARNISH_VERSION}-1_amd64.deb
+  else
+    curl http://repo.varnish-cache.org/debian/GPG-key.txt | sudo apt-key add -
+    echo "deb https://repo.varnish-cache.org/ubuntu/ trusty varnish-${VARNISH_VERSION}" | sudo tee -a /etc/apt/sources.list.d/varnish-cache.list
+    sudo apt-get update -qq
+    sudo apt-get install -qq varnish
+  fi
+  sudo service varnish stop
 
 script: ./gradlew check --info
 

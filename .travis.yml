@@ -2,13 +2,12 @@ dist: trusty
 
 language: java
 
-jdk:
-  - oraclejdk8
-
 matrix:
   include:
-    - env: VARNISH_VERSION=4.1
-    - env: VARNISH_VERSION=5.0.0
+    - jdk: oraclejdk8
+      env: VARNISH_VERSION=4.1
+    - jdk: oraclejdk8
+      env: VARNISH_VERSION=5.0.0
 
 before_install:
 - |

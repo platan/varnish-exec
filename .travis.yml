@@ -6,6 +6,7 @@ jdk:
   - oraclejdk8
 
 env:
+  - VARNISH_VERSION=4.0
   - VARNISH_VERSION=4.1
   - VARNISH_VERSION=5.0.0
 

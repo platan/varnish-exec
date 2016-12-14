@@ -74,7 +74,7 @@ class VarnishExecSpec extends Specification {
     }
 
     private static boolean varnishRunning() {
-        'pidof varnishd'.execute().waitFor() == 0
+        'ps o cmd= --ppid 1 --deselect | grep "[v]arnish"'.execute().waitFor() == 0
     }
 
     static varnishdInstalled() {

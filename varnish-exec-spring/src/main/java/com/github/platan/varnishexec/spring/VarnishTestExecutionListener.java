@@ -11,6 +11,7 @@ import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.test.context.TestContext;
 import org.springframework.test.context.support.AbstractTestExecutionListener;
+import org.springframework.util.SocketUtils;
 
 import java.io.IOException;
 import java.net.URI;
@@ -21,7 +22,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 import static java.lang.Integer.parseInt;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -36,7 +36,6 @@ import static java.nio.file.Files.createTempFile;
  */
 public class VarnishTestExecutionListener extends AbstractTestExecutionListener {
 
-    private static final Random RANDOM = new Random();
     private static final String VARNISH_PROPERTY_SOURCE = "varnish";
     private static final String LOCAL_PORT_PLACEHOLDER = "@local.port@";
     private VarnishProcess varnishProcess;
@@ -101,13 +100,8 @@ public class VarnishTestExecutionListener extends AbstractTestExecutionListener 
     }
 
     private int preparePort(int port) {
-        return port == 0 ? getRandomPort() : port;
+        return port == 0 ? SocketUtils.findAvailableTcpPort() : port;
     }
-
-    private int getRandomPort() {
-        return RANDOM.nextInt(65535) + 1;
-    }
-
 
     private <T> void setPortProperty(ApplicationContext context, String sourceName, String propertyName, T propertyValue) {
         if (context instanceof ConfigurableApplicationContext) {

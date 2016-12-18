@@ -29,7 +29,7 @@ Apache Maven:
     <dependency>
         <groupId>com.github.platan</groupId>
         <artifactId>varnish-exec-(core|junit|spring)</artifactId>
-        <version>0.2.0</version>
+        <version>0.2.1</version>
         <scope>test</scope>
     </dependency>
 </dependencies>
@@ -41,7 +41,7 @@ repositories {
 }
 
 dependencies {
-    testCompile 'com.github.platan:varnish-exec-(core|junit|spring):0.2.0'
+    testCompile 'com.github.platan:varnish-exec-(core|junit|spring):0.2.1'
 }
 ```
 
@@ -185,6 +185,9 @@ The `VarnishTest` class allows to define all options listed above. Furthermore, 
 Check a [documentation](https://github.com/platan/varnish-exec/blob/master/varnish-exec-spring/src/main/java/com/github/platan/varnishexec/spring/VarnishTest.java) for more information. 
 
 ## Changelog
+
+### 0.2.1 (2016-12-16)
+- a random port is selected from the range 1024 - 65535
 
 ### 0.2.0 (2016-09-03)
 - (new feature) added varnish-exec-spring module providing integration with the Spring TestContext Framework
